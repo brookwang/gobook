@@ -28,12 +28,10 @@ import (
 |SetKeepAlivesEnabled|该函数控制是否http的keep-alives能够使用，默认情况下，keep-alives总是可用的。只有资源非常紧张的环境或者服务端在关闭进程中时，才应该关闭该功能。|func (s *r) SetKeepAlivesEnabled(v bool)|
 |CancelRequest|通过关闭连接来取消传送中的请求。|func (t *Transport) CancelRequest(req *Request)|
 |CloseIdleConnections|关闭所有之前请求但目前处于空闲状态的连接。该方法并不中断任何正在使用的连接。|func (t *Transport) CloseIdleConnections()|
-||||
-
+|RegisterProtocol|RegisterProtocol注册一个新的名为scheme的协议。t会将使用scheme协议的请求转交给rt。rt有责任模拟HTTP请求的语义。RegisterProtocol可以被其他包用于提供"ftp"或"file"等协议的实现。|func (t *Transport) RegisterProtocol(scheme string, rt RoundTripper)|
+|RoundTrip|该函数实现了RoundTripper接口，对于高层http客户端支持，例如处理cookies以及重定向，查看Get，Post以及Client类型。|func (t *Transport) RoundTrip(req *Request) (resp *Response, err error)|
 
    
 
    
     
-    func (t *Transport) RegisterProtocol(scheme string, rt RoundTripper)//RegisterProtocol注册一个新的名为scheme的协议。t会将使用scheme协议的请求转交给rt。rt有责任模拟HTTP请求的语义。RegisterProtocol可以被其他包用于提供"ftp"或"file"等协议的实现。
-    func (t *Transport) RoundTrip(req *Request) (resp *Response, err error)//该函数实现了RoundTripper接口，对于高层http客户端支持，例如处理cookies以及重定向，查看Get，Post以及Client类型。
