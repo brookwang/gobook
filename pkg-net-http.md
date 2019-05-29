@@ -1,33 +1,29 @@
+### 介绍
 http包提供了HTTP客户端和服务端的实现
 
+### 引用示例
+import (
+	"net/http"	
+)
 
 |方法|介绍|示例|
 |:---|:---|:---|
 |Get|利用get方法请求指定的url，Get请求指定的页面信息，并返回实体主体|func (c *Client) Get(url string) (resp *Response, err error)|
 |Head|利用head方法请求指定的url，Head只返回页面的首部|func (c *Client) Head(url string) (resp *Response, err error)|
 |Post|利用post方法请求指定的URl,如果body也是一个io.Closer,则在请求之后关闭它|func (c *Client) Head(url string) (resp *Response, err error)|
+|PostForm|利用post方法请求指定的url,利用data的key和value作为请求体.|func (c *Client) PostForm(url string, data url.Values) (resp *Response, err error)|
+|Do|Do发送http请求并且返回一个http响应,遵守client的策略,如重定向,cookies以及auth等.当调用者读完resp.body之后应该关闭它|func (c *Client) Do(req *Request) (resp *Response, err error)|
+|CanonicalHeaderKey|返回header key的规范化形式,规范化形式是以"-"为分隔符,每一部分都是首字母大写,其他字母小写.例如"accept-encoding" 的标准化形式是 "Accept-Encoding".|func CanonicalHeaderKey(s string) string|
+||||
+||||
+||||
+||||
+||||
+||||
+||||
+||||
+||||
 
-
-
-1、 func (c *Client) Get(url string) (resp *Response, err error)
-说明： 利用get方法请求指定的url，Get请求指定的页面信息，并返回实体主体
-
-2、func (c *Client) Head(url string) (resp *Response, err error)
-说明：利用head方法请求指定的url，Head只返回页面的首部
-
-3、func (c *Client) Post(url string, bodyType string, body io.Reader) (resp *Response, err error)
-说明：利用post方法请求指定的URl,如果body也是一个io.Closer,则在请求之后关闭它
-
-4、func (c *Client) PostForm(url string, data url.Values) (resp *Response, err error)
-说明：利用post方法请求指定的url,利用data的key和value作为请求体.
-
-5、func (c *Client) Do(req *Request) (resp *Response, err error)
-说明：Do发送http请求并且返回一个http响应,遵守client的策略,如重定向,cookies以及auth等.当调用者读完resp.body之后应该关闭它,
-
-http.ListenAndServe
-启动一个http服务器，监听8080端口
-
-func CanonicalHeaderKey(s string) string//返回header key的规范化形式,规范化形式是以"-"为分隔符,每一部分都是首字母大写,其他字母小写.例如"accept-encoding" 的标准化形式是 "Accept-Encoding".
 func DetectContentType(data []byte) string//检查给定数据的内容类型Content-Type,最多检测512byte数据,如果有效的话,该函数返回一个MIME类型,否则的话,返回一个"application/octet-stream"
 func Error(w ResponseWriter, error string, code int)//利用指定的错误信息和Http code来响应请求,其中错误信息必须是纯文本.
 func NotFound(w ResponseWriter, r *Request)//返回HTTP404 not found错误
