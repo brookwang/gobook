@@ -8,7 +8,7 @@
 非flag（non-flag）命令行参数（或保留的命令行参数）：后文解释
 ### 1.1. 使用示例
 我们以 nginx 为例，执行 nginx -h，输出如下：
-
+`
 nginx version: nginx/1.10.0
 Usage: nginx [-?hvVtTq] [-s signal] [-c filename] [-p prefix] [-g directives]
 
@@ -106,24 +106,26 @@ Options:
   -t    test configuration and exit
   -v    show version and exit
 仔细理解以上例子，如果有不理解的，看完下文的讲解再回过头来看。
-
+`
 ## 1.2. flag 包概述
 flag 包实现了命令行参数的解析。
 
 ### 1.2.1. 定义 flags 有两种方式
 * 1）flag.Xxx()，其中 Xxx 可以是 Int、String 等；返回一个相应类型的指针，如：
-
+`
 var ip = flag.Int("flagname", 1234, "help message for flagname")
+`
 * 2）flag.XxxVar()，将 flag 绑定到一个变量上，如：
-
+`
 var flagvar int
 flag.IntVar(&flagvar, "flagname", 1234, "help message for flagname")
+`
 ### 1.2.2. 自定义 Value
 另外，还可以创建自定义 flag，只要实现 flag.Value 接口即可（要求 receiver 是指针），这时候可以通过如下方式定义该 flag：
 
 flag.Var(&flagVal, "name", "help message for flagname")
 例如，解析我喜欢的编程语言，我们希望直接解析到 slice 中，我们可以定义如下 Value：
-
+`
 type sliceValue []string
 
 func newSliceValue(vals []string, p *[]string) *sliceValue {
@@ -139,10 +141,12 @@ func (s *sliceValue) Set(val string) error {
 func (s *sliceValue) Get() interface{} { return []string(*s) }
 
 func (s *sliceValue) String() string { return strings.Join([]string(*s), ",") }
+`
 之后可以这么使用：
-
+`
 var languages []string
 flag.Var(newSliceValue([]string{}, &languages), "slice", "I like programming `languages`")
+`
 这样通过 -slice "go,php" 这样的形式传递参数，languages 得到的就是 [go, php]。
 
 flag 中对 Duration 这种非基本类型的支持，使用的就是类似这样的方式。
@@ -180,16 +184,17 @@ go标准库中，经常这么做：
 
 type ErrorHandling int
 该类型定义了在参数解析出错时错误处理方式。定义了三个该类型的常量：
-
+`
 const (
     ContinueOnError ErrorHandling = iota
     ExitOnError
     PanicOnError
 )
+`
 三个常量在源码的 FlagSet 的方法 parseOne() 中使用了。
 
 * 2）Flag
-
+`
 // A Flag represents the state of a flag.
 type Flag struct {
     Name     string // name as it appears on command line
@@ -197,21 +202,23 @@ type Flag struct {
     Value    Value  // value as set
     DefValue string // default value (as text); for usage message
 }
+`
 Flag 类型代表一个 flag 的状态。
 
 比如，对于命令：./nginx -c /etc/nginx.conf，相应代码是：
 
 flag.StringVar(&c, "c", "conf/nginx.conf", "set configuration `file`")
 则该 Flag 实例（可以通过 flag.Lookup("c") 获得）相应各个字段的值为：
-
+`
 &Flag{
     Name: c,
     Usage: set configuration file,
     Value: /etc/nginx.conf,
     DefValue: conf/nginx.conf,
 }
+`
 * 3）FlagSet
-
+`
 // A FlagSet represents a set of defined flags.
 type FlagSet struct {
     // Usage is the function called when an error occurs while parsing flags.
@@ -236,6 +243,7 @@ type Value interface {
     String() string
     Set(string) error
 }
+
 所有参数类型需要实现 Value 接口，flag 包中，为int、float、bool等实现了该接口。借助该接口，我们可以自定义flag。（上文已经给了具体的例子）
 
 ## 1.4. 主要类型的方法（包括类型实例化）
