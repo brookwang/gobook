@@ -1,4 +1,4 @@
-1. 13.1 flag - 命令行参数解析
+# flag - 命令行参数解析
 在写命令行程序（工具、server）时，对命令参数进行解析是常见的需求。各种语言一般都会提供解析命令行参数的方法或库，以方便程序员使用。如果命令行参数纯粹自己写代码解析，对于比较复杂的，还是挺费劲的。在 go 标准库中提供了一个包：flag，方便进行命令行解析。
 
 注：区分几个概念
@@ -6,111 +6,11 @@
 命令行参数（或参数）：是指运行程序提供的参数
 已定义命令行参数：是指程序中通过flag.Xxx等这种形式定义了的参数
 非flag（non-flag）命令行参数（或保留的命令行参数）：后文解释
-1.1. 使用示例
-我们以 nginx 为例，执行 nginx -h，输出如下：
 
-nginx version: nginx/1.10.0
-Usage: nginx [-?hvVtTq] [-s signal] [-c filename] [-p prefix] [-g directives]
-
-Options:
-  -?,-h         : this help
-  -v            : show version and exit
-  -V            : show version and configure options then exit
-  -t            : test configuration and exit
-  -T            : test configuration, dump it and exit
-  -q            : suppress non-error messages during configuration testing
-  -s signal     : send signal to a master process: stop, quit, reopen, reload
-  -p prefix     : set prefix path (default: /usr/local/nginx/)
-  -c filename   : set configuration file (default: conf/nginx.conf)
-  -g directives : set global directives out of configuration file
-我们通过 flag 实现类似 nginx 的这个输出，创建文件 nginx.go，内容如下：
-
-package main
-
-import (
-    "flag"
-    "fmt"
-    "os"
-)
-
-// 实际中应该用更好的变量名
-var (
-    h bool
-
-    v, V bool
-    t, T bool
-    q    *bool
-
-    s string
-    p string
-    c string
-    g string
-)
-
-func init() {
-    flag.BoolVar(&h, "h", false, "this help")
-
-    flag.BoolVar(&v, "v", false, "show version and exit")
-    flag.BoolVar(&V, "V", false, "show version and configure options then exit")
-
-    flag.BoolVar(&t, "t", false, "test configuration and exit")
-    flag.BoolVar(&T, "T", false, "test configuration, dump it and exit")
-
-    // 另一种绑定方式
-    q = flag.Bool("q", false, "suppress non-error messages during configuration testing")
-
-    // 注意 `signal`。默认是 -s string，有了 `signal` 之后，变为 -s signal
-    flag.StringVar(&s, "s", "", "send `signal` to a master process: stop, quit, reopen, reload")
-    flag.StringVar(&p, "p", "/usr/local/nginx/", "set `prefix` path")
-    flag.StringVar(&c, "c", "conf/nginx.conf", "set configuration `file`")
-    flag.StringVar(&g, "g", "conf/nginx.conf", "set global `directives` out of configuration file")
-
-    // 改变默认的 Usage
-    flag.Usage = usage
-}
-
-func main() {
-    flag.Parse()
-
-    if h {
-        flag.Usage()
-    }
-}
-
-func usage() {
-    fmt.Fprintf(os.Stderr, `nginx version: nginx/1.10.0
-Usage: nginx [-hvVtTq] [-s signal] [-c filename] [-p prefix] [-g directives]
-
-Options:
-`)
-    flag.PrintDefaults()
-}
-执行：go run nginx.go -h，（或 go build -o nginx && ./nginx -h）输出如下：
-
-nginx version: nginx/1.10.0
-Usage: nginx [-hvVtTq] [-s signal] [-c filename] [-p prefix] [-g directives]
-
-Options:
-  -T    test configuration, dump it and exit
-  -V    show version and configure options then exit
-  -c file
-        set configuration file (default "conf/nginx.conf")
-  -g directives
-        set global directives out of configuration file (default "conf/nginx.conf")
-  -h    this help
-  -p prefix
-        set prefix path (default "/usr/local/nginx/")
-  -q    suppress non-error messages during configuration testing
-  -s signal
-        send signal to a master process: stop, quit, reopen, reload
-  -t    test configuration and exit
-  -v    show version and exit
-仔细理解以上例子，如果有不理解的，看完下文的讲解再回过头来看。
-
-1.2. flag 包概述
+## 1.2. flag 包概述
 flag 包实现了命令行参数的解析。
 
-1.2.1. 定义 flags 有两种方式
+### 1.2.1. 定义 flags 有两种方式
 1）flag.Xxx()，其中 Xxx 可以是 Int、String 等；返回一个相应类型的指针，如：
 
 var ip = flag.Int("flagname", 1234, "help message for flagname")
@@ -118,7 +18,7 @@ var ip = flag.Int("flagname", 1234, "help message for flagname")
 
 var flagvar int
 flag.IntVar(&flagvar, "flagname", 1234, "help message for flagname")
-1.2.2. 自定义 Value
+### 1.2.2. 自定义 Value
 另外，还可以创建自定义 flag，只要实现 flag.Value 接口即可（要求 receiver 是指针），这时候可以通过如下方式定义该 flag：
 
 flag.Var(&flagVal, "name", "help message for flagname")
@@ -147,7 +47,7 @@ flag.Var(newSliceValue([]string{}, &languages), "slice", "I like programming `la
 
 flag 中对 Duration 这种非基本类型的支持，使用的就是类似这样的方式。
 
-1.2.3. 解析 flag
+### 1.2.3. 解析 flag
 在所有的 flag 定义完成之后，可以通过调用 flag.Parse() 进行解析。
 
 命令行 flag 的语法有如下三种形式：
@@ -159,14 +59,14 @@ flag 中对 Duration 这种非基本类型的支持，使用的就是类似这�
 
 int 类型可以是十进制、十六进制、八进制甚至是负数；bool 类型可以是1, 0, t, f, true, false, TRUE, FALSE, True, False。Duration 可以接受任何 time.ParseDuration 能解析的类型。
 
-1.3. 类型和函数
+## 1.3. 类型和函数
 在看类型和函数之前，先看一下变量。
 
-ErrHelp：该错误类型用于当命令行指定了 ·-help` 参数但没有定义时。
+ErrHelp：该错误类型用于当命令行指定了 ·-help 参数但没有定义时。
 
 Usage：这是一个函数，用于输出所有定义了的命令行参数和帮助信息（usage message）。一般，当命令行参数解析出错时，该函数会被调用。我们可以指定自己的 Usage 函数，即：flag.Usage = func(){}
 
-1.3.1. 函数
+### 1.3.1. 函数
 go标准库中，经常这么做：
 
 定义了一个类型，提供了很多方法；为了方便使用，会实例化一个该类型的实例（通用），这样便可以直接使用该实例调用方法。比如：encoding/base64 中提供了 StdEncoding 和 URLEncoding 实例，使用时：base64.StdEncoding.Encode()
@@ -175,7 +75,7 @@ go标准库中，经常这么做：
 
 这里不详细介绍各个函数，在类型方法中介绍。
 
-1.3.2. 类型（数据结构）
+### 1.3.2. 类型（数据结构）
 1）ErrorHandling
 
 type ErrorHandling int
@@ -238,10 +138,10 @@ type Value interface {
 }
 所有参数类型需要实现 Value 接口，flag 包中，为int、float、bool等实现了该接口。借助该接口，我们可以自定义flag。（上文已经给了具体的例子）
 
-1.4. 主要类型的方法（包括类型实例化）
+## 1.4. 主要类型的方法（包括类型实例化）
 flag 包中主要是 FlagSet 类型。
 
-1.4.1. 实例化方式
+### 1.4.1. 实例化方式
 NewFlagSet() 用于实例化 FlagSet。预定义的 FlagSet 实例 CommandLine 的定义方式：
 
 // The default set of command-line flags, parsed from os.Args.
@@ -250,10 +150,10 @@ var CommandLine = NewFlagSet(os.Args[0], ExitOnError)
 
 由于 FlagSet 中的字段没有 export，其他方式获得 FlagSet实例后，比如：FlagSet{} 或 new(FlagSet)，应该调用Init() 方法，以初始化 name 和 errorHandling，否则 name 为空，errorHandling 为 ContinueOnError。
 
-1.4.2. 定义 flag 参数的方法
+### 1.4.2. 定义 flag 参数的方法
 这一序列的方法都有两种形式，在一开始已经说了两种方式的区别。这些方法用于定义某一类型的 flag 参数。
 
-1.4.3. 解析参数（Parse）
+### 1.4.3. 解析参数（Parse）
 func (f *FlagSet) Parse(arguments []string) error
 从参数列表中解析定义的 flag。方法参数 arguments 不包括命令名，即应该是os.Args[1:]。事实上，flag.Parse() 函数就是这么做的：
 
@@ -337,15 +237,15 @@ parseOne 方法中接下来是处理 -flag=x 这种形式，然后是 -flag 这�
 f.args = f.args[1:]
 也就是说，每执行成功一次 parseOne，f.args 会少一个。所以，FlagSet 中的 args 最后留下来的就是所有 non-flag 参数。
 
-1.4.4. Arg(i int) 和 Args()、NArg()、NFlag()
+### 1.4.4. Arg(i int) 和 Args()、NArg()、NFlag()
 Arg(i int) 和 Args() 这两个方法就是获取 non-flag 参数的；NArg()获得 non-flag 的个数；NFlag() 获得 FlagSet 中 actual 长度（即被设置了的参数个数）。
 
-1.4.5. Visit/VisitAll
+### 1.4.5. Visit/VisitAll
 这两个函数分别用于访问 FlatSet 的 actual 和 formal 中的 Flag，而具体的访问方式由调用者决定。
 
-1.4.6. PrintDefaults()
+### 1.4.6. PrintDefaults()
 打印所有已定义参数的默认值（调用 VisitAll 实现），默认输出到标准错误，除非指定了 FlagSet 的 output（通过SetOutput() 设置）
 
-1.4.7. Set(name, value string)
+### 1.4.7. Set(name, value string)
 设置某个 flag 的值（通过 name 查找到对应的 Flag）
 
