@@ -111,10 +111,10 @@ Options:
 flag 包实现了命令行参数的解析。
 
 ### 1.2.1. 定义 flags 有两种方式
-1）flag.Xxx()，其中 Xxx 可以是 Int、String 等；返回一个相应类型的指针，如：
+* 1）flag.Xxx()，其中 Xxx 可以是 Int、String 等；返回一个相应类型的指针，如：
 
 var ip = flag.Int("flagname", 1234, "help message for flagname")
-2）flag.XxxVar()，将 flag 绑定到一个变量上，如：
+* 2）flag.XxxVar()，将 flag 绑定到一个变量上，如：
 
 var flagvar int
 flag.IntVar(&flagvar, "flagname", 1234, "help message for flagname")
@@ -176,7 +176,7 @@ go标准库中，经常这么做：
 这里不详细介绍各个函数，在类型方法中介绍。
 
 ### 1.3.2. 类型（数据结构）
-1）ErrorHandling
+* 1）ErrorHandling
 
 type ErrorHandling int
 该类型定义了在参数解析出错时错误处理方式。定义了三个该类型的常量：
@@ -188,7 +188,7 @@ const (
 )
 三个常量在源码的 FlagSet 的方法 parseOne() 中使用了。
 
-2）Flag
+* 2）Flag
 
 // A Flag represents the state of a flag.
 type Flag struct {
@@ -210,7 +210,7 @@ flag.StringVar(&c, "c", "conf/nginx.conf", "set configuration `file`")
     Value: /etc/nginx.conf,
     DefValue: conf/nginx.conf,
 }
-3）FlagSet
+* 3）FlagSet
 
 // A FlagSet represents a set of defined flags.
 type FlagSet struct {
@@ -228,7 +228,7 @@ type FlagSet struct {
     errorHandling ErrorHandling // 当解析出错时，处理错误的方式
     output io.Writer // nil means stderr; use out() accessor
 }
-4）Value 接口
+* 4）Value 接口
 
 // Value is the interface to the dynamic value stored in a flag.
 // (The default value is represented as a string.)
