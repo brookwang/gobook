@@ -1,5 +1,14 @@
 http包提供了HTTP客户端和服务端的实现
 
+
+|方法|介绍|示例|
+|:---|:---|:---|
+|Get|利用get方法请求指定的url，Get请求指定的页面信息，并返回实体主体|func (c *Client) Get(url string) (resp *Response, err error)|
+|Head|利用head方法请求指定的url，Head只返回页面的首部|func (c *Client) Head(url string) (resp *Response, err error)|
+|Post|利用post方法请求指定的URl,如果body也是一个io.Closer,则在请求之后关闭它|func (c *Client) Head(url string) (resp *Response, err error)|
+
+
+
 1、 func (c *Client) Get(url string) (resp *Response, err error)
 说明： 利用get方法请求指定的url，Get请求指定的页面信息，并返回实体主体
 
