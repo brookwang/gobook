@@ -1,4 +1,4 @@
-fasthttp是由valyala编写的声称快于Go官方标准库net/http包十倍的快速HTTP实现。
+fasthttp是由valyala编写的声称快于Go官方标准库net/http包十倍的快速HTTP实现。  
 从各方的性能测试结果来看（评测一、评测二），fasthttp作为当下最快的http Go语言包当之无愧。
 
 
