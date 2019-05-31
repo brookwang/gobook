@@ -23,7 +23,7 @@ flag.IntVar(&flagvar, "flagname", 1234, "help message for flagname")
 
 flag.Var(&flagVal, "name", "help message for flagname")
 例如，解析我喜欢的编程语言，我们希望直接解析到 slice 中，我们可以定义如下 Value：
-
+```
 type sliceValue []string
 
 func newSliceValue(vals []string, p *[]string) *sliceValue {
@@ -39,6 +39,7 @@ func (s *sliceValue) Set(val string) error {
 func (s *sliceValue) Get() interface{} { return []string(*s) }
 
 func (s *sliceValue) String() string { return strings.Join([]string(*s), ",") }
+```
 之后可以这么使用：
 
 var languages []string
@@ -80,12 +81,13 @@ go标准库中，经常这么做：
 
 type ErrorHandling int
 该类型定义了在参数解析出错时错误处理方式。定义了三个该类型的常量：
-
+```
 const (
     ContinueOnError ErrorHandling = iota
     ExitOnError
     PanicOnError
 )
+```
 三个常量在源码的 FlagSet 的方法 parseOne() 中使用了。
 
 2）Flag
@@ -168,7 +170,7 @@ func Parse() {
 如果提供了 -help 参数（命令中给了）但没有定义（代码中没有），该方法返回 ErrHelp 错误。默认的 CommandLine，在 Parse 出错时会退出程序（ExitOnError）。
 
 为了更深入的理解，我们看一下 Parse(arguments []string) 的源码：
-
+```
 func (f *FlagSet) Parse(arguments []string) error {
     f.parsed = true
     f.args = arguments
@@ -191,6 +193,7 @@ func (f *FlagSet) Parse(arguments []string) error {
     }
     return nil
 }
+```
 真正解析参数的方法是非导出方法 parseOne。
 
 结合 parseOne 方法，我们来解释 non-flag 以及包文档中的这句话：
