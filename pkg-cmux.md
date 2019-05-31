@@ -3,7 +3,7 @@ cmux是一个通用的Go库，用于复用连接。使用cmux，您可以在同�
 https://github.com/soheilhy/cmux
 
 ### 示例
-``
+```
 // Create the main listener.
 l, err := net.Listen("tcp", ":23456")
 if err != nil {
@@ -37,7 +37,7 @@ go trpcS.Accept(trpcL)
 
 // Start serving!
 m.Serve()
-``
+```
 
 
 ### 性能
