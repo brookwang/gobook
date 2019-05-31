@@ -36,8 +36,7 @@ go httpS.Serve(httpL)
 go trpcS.Accept(trpcL)
 
 // Start serving!
-m.Serve()
-`
+m.Serve()`
 
 
 ### 性能
