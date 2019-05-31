@@ -7,6 +7,13 @@ import "github.com/valyala/fasthttp"
 
 fasthttp包提供了快速HTTP服务端及客户端API。
 
+### 主要的点在于四个方面：
+
+1. net/http 的实现是一个连接新建一个 goroutine；fasthttp 是利用一个 worker 复用 goroutine，减轻 runtime 调度 goroutine 的压力
+2. net/http 解析的请求数据很多放在 map[string]string(http.Header) 或 map[string][]string(http.Request.Form)，有不必要的 []byte 到 string 的转换，是可以规避的
+3. net/http 解析 HTTP 请求每次生成新的 *http.Request 和 http.ResponseWriter; fasthttp 解析 HTTP 数据到 *fasthttp.RequestCtx，然后使用 sync.Pool 复用结构实例，减少对象的数量
+4. fasthttp 会延迟解析 HTTP 请求中的数据，尤其是 Body 部分。这样节省了很多不直接操作 Body 的情况的消耗
+
 ### Fasthttp功能
 
 　　*速度优化。在现代硬件上，可轻松实现处理超过100K qps，超过100万的keep-alive长连接并发。
@@ -56,6 +63,16 @@ fasthttp包提供了快速HTTP服务端及客户端API。
 　　*客户端支持失败请求自动重发。
 
 　　*fasthttp API的设计具有扩展现有客户端及服务端实现，或重新编写自定义客户端及服务端的能力。
+
+### fasthttp的不足：  
+HTTP/2.0 不支持  
+WebSocket 不支持  
+严格来说 Websocket 通过 Hijack() 是可以支持的，但是 fasthttp 想自己提供直接操作的 API。那还需要等待开发。
+
+### 总结
+比较标准库的粗犷，fasthttp 有更精细的设计，对 Go 网络并发编程的主要痛点做了很多工作，达到了很好的效果。目前，iris 和 echo 支持 fasthttp，性能上和使用 net/http 的别的 Web 框架对比有明显的优势。如果选择 Web 框架，支持 fasthttp 可以看作是一个真好的卖点，值得注意。
+
+
 
 func AppendBytesStr(dst []byte, src string) []byte
 AppendBytesStr函数用于附加src源字符串至dst目的字节切片中，并返回扩展后的dst目的字节切片结果。
