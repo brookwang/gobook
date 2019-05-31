@@ -71,8 +71,8 @@ WebSocket 不支持
 
 ### 总结
 比较标准库的粗犷，fasthttp 有更精细的设计，对 Go 网络并发编程的主要痛点做了很多工作，达到了很好的效果。目前，iris 和 echo 支持 fasthttp，性能上和使用 net/http 的别的 Web 框架对比有明显的优势。如果选择 Web 框架，支持 fasthttp 可以看作是一个真好的卖点，值得注意。
-
-
+  
+参考: https://studygolang.com/articles/5077?fr=sidebar
 
 func AppendBytesStr(dst []byte, src string) []byte
 AppendBytesStr函数用于附加src源字符串至dst目的字节切片中，并返回扩展后的dst目的字节切片结果。
